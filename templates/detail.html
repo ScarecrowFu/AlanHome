@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load article_tags %}
+{% load martortags %}
+
+{% block css %}
+    <link href="{% static 'plugins/css/ace.min.css' %}" type="text/css" media="all" rel="stylesheet" />
+    <link href="{% static 'martor/css/martor.bootstrap.min.css' %}" type="text/css" media="all" rel="stylesheet" />
+    <style type='text/css'>
+        pre, code {
+            white-space: pre;
+            overflow-x: scroll;
+        }
+        .hljs {
+            display: inline-block;
+            overflow-x: scroll;
+            padding: 0.5em;
+            padding-right: 100%;
+            background: #002b36;
+            color: #839496;
+            -webkit-text-size-adjust: none;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}
+    - {{ article.title }}
+{% endblock %}
+
+{% block nav %}
+    <nav class="breadcrumb container">
+        <a href='/'>首页</a> >
+        <a href='{% url 'articles' article.category.menu.id %}?type=menu'>{{ article.category.menu.name }}</a> >  >
+        <a href='{% url 'articles' article.category.id %}?type=category'>{{ article.category.name }}</a>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div id="mainbox" class="article-box fl mb">
+        <article class="art-main sb br mb">
+            <div class="art-head mb">
+                <h1 class="art-title">{{ article.title }}</h1>
+                <div class="head-info"> <span class="author"><i class="iconfont icon-user"></i>{{ article.creator.nickname }}</span>
+                    <time class="time"> <i class="iconfont icon-time"></i> {{ article.created_time|format_time }} </time>
+                    <span class="view"><i class="iconfont icon-view"></i>{{ article.view_count }}</span>
+                    <span class="comment"><i class="iconfont icon-comment"></i>0</span>
+                </div>
+            </div>
+            {#      <div class="pcd_ad" style="margin-bottom:10px"><table width="100%" height="90" style="background-color:#ccc;">    <tbody><tr align="center">      <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-内容头部广告位</td>    </tr>  </tbody></table></div>#}
+            {#      <div class="mbd_ad" style="margin-bottom:10px"><table width="100%" height="90" style="background-color:#ccc;">    <tbody><tr align="center">      <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-内容头部广告位</td>    </tr>  </tbody></table></div>#}
+            <div class="art-content">
+
+                {{ article.content | safe_markdown }}
+
+                <p class="tag-wrap mt mb">
+                    <i class="iconfont icon-tag"></i>标签：
+                    {% for tag in article.tags.all %}
+                        <a href='{% url 'articles' tag.id %}?type=tag'>{{ tag.name }}</a>
+                    {% endfor %}
+                </p>
+                <!--打赏-->
+                <div class="reward-widget">
+                    <div id="reward-btn" class="btn">赏</div>
+                    <div id="popup">
+                        <div id="reward-img" class="img-bg sb br transition"><img  src="{% static 'images/reward_img.png' %}" alt="打赏二维码">
+                            <i id="close" class="iconfont icon-close"></i></div>
+                    </div>
+                </div>
+
+                <div class="social-widget mt clearfix">
+                    <!--点赞-->
+                    <div class="thumbs-up-widget fl" id="newdigg"> <a href="#comment" class="diggit">
+                        <div id="comment_button" class="thumbs-btn suiranx_air_thumbs"><span class="num">立即评论</span></div>
+                    </a> </div>
+                    <!--分享-->
+                    <div class="share-widget fr">
+                        <div id="like" class="thumbs-btn suiranx_air_thumbs"><span id="lime_num" class="num">点赞:{{ article.like_count }}</span></div>
+                    </div>
+                    <script>
+                        $("#like").click(function(){
+                            let is_like = true;
+                            if ($("#like").hasClass("thumbs_done")) {
+                                $("#like").removeClass("thumbs_done");
+                                is_like = false;
+                            } else {
+                                $("#like").addClass("thumbs_done");
+                                is_like = true;
+                            }
+                            $.ajax({
+                                type: "POST",
+                                url: "{% url 'like_article' article.id %}",
+                                data: {
+                                    is_like: is_like,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                },
+                                success: function(d){
+                                    $('#lime_num').text("点赞:" + d.like_count);
+                                },
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+            {#            <div class="pcd_ad" style="margin-top:15px"><table width="100%" height="90" style="background-color:#ccc;">    <tbody><tr align="center">      <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-内容底部广告位</td>    </tr>  </tbody></table></div>#}
+            {#            <div class="mbd_ad" style="margin-top:15px"><table width="100%" height="90" style="background-color:#ccc;">    <tbody><tr align="center">      <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-内容底部广告位</td>    </tr>  </tbody></table></div>#}
+        </article>
+
+        <!-- 广告位AD5  -->
+        <div class="prev-next sb br mb clearfix">
+
+            <p class="post-prev fl ellipsis">上一篇：
+                {% if prev_article %}
+                    <a href='{% url 'article' prev_article.id %}'>{{ prev_article.title }}</a>
+                {% else %}
+                    无
+                {% endif %}
+            </p>
+
+
+            <p class="post-prev fl ellipsis">下一篇：
+                {% if next_article %}
+                    <a href='{% url 'article' next_article.id %}'>{{ next_article.title }}</a>
+                {% else %}
+                    无
+                {% endif %}
+            </p>
+
+        </div>
+
+        <!--相关文章选择同关键词的文章-->
+        <div class="related-art sb br mb">
+            <p class="c-title"><span class="name">相关文章</span></p>
+            <ul class="ul clearfix">
+                {% for related_article in related_articles %}
+                    <li class="related-item mt fl">
+                        <a href="{% url 'article' related_article.id %}" title="{{ related_article.title }}">
+                            <img class="img br img-cover" src="/media/{{ related_article.cover }}"
+                                 alt="{{ related_article.title }}">
+                            <p class="titile">{{ related_article.title }}</p>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="comment" class="post-comment clearfix sb br mt">
+            <p id="comments-title" class="c-title mb bn"><span>发表评论</span> (评论功能未开放)</p>
+            <div class="compost">
+                <!-- //AJAX评论区 开始 -->
+                <link href="{% static 'js/comments/comments.css' %}" rel="stylesheet" type="text/css" />
+                <div id="comments" class="entry-comments">
+                    <div id="respond" class="comment-respond">
+                        <form id="commentform" action="#" method="post">
+                            <input type="hidden" name="dopost" value="send" />
+                            <input type="hidden" name="aid" value="41" />
+                            <div class="comt-ctrl"><div class="comt-tips">
+                                <input type='hidden' name='comment_post_ID' value='41' id='comment_post_ID' />
+                                <input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+                                <input type="hidden" id="_wp_unfiltered_html_comment_disabled" name="_wp_unfiltered_html_comment_disabled" value="caa5eb0098" /><script>(function(){if(window===window.parent){document.getElementById('_wp_unfiltered_html_comment_disabled').name='_wp_unfiltered_html_comment';}})();</script>
+                            </div></div>
+                            <div class="comment-form" id="_ajax_feedback">
+                                <div class="comment-form-comment">
+                                    <textarea disabled="disabled" placeholder="需要登录才能发表评论" id="comment" name="msg" class="ipt" rows="4"></textarea>
+                                </div>
+                                <div class="form-submit">
+                                    <div class="form-submit-text pull-left"><a title="注册" href="#F">注册</a>&nbsp;&nbsp;<a title="登录" href="#">登录</a></div>
+                                    <input name="submit" type="submit" id="must-submit" class="submit" value="发表" disabled>
+                                    <input type="button" id="cancel-comment-reply-link" class="submit" value="取消" style="display:none;" disabled>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {#                    <h3 class="comments-title"> 评论列表</h3>#}
+                    {#                    <div id="postcomments">#}
+                    {#                        <ul class="comments-list" id="commetcontent"></ul>#}
+                    {#                        <div class="pagination clearfix">#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+
+                </div>
+                <!-- //AJAX评论区 结束 -->
+
+            </div>
+            <div class="comment-list mt">
+                <p class="no-comment"><i class="iconfont icon-sofa"></i>(评论功能未开放)</p>
+                <span id="AjaxCommentBegin"></span>
+                <div class="pagebar mb mt">
+                    <div class="nav-links"> </div>
+                </div>
+                <span id="AjaxCommentEnd"></span> </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'plugins/js/highlight.min.js' %}"></script>
+    <script>
+        $('.martor-preview pre').each(function(i, block){
+            hljs.highlightBlock(block);
+        });
+    </script>
+{% endblock %}

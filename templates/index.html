@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load article_tags %}
+
+{% block title %} 首页 {% endblock %}
+
+{% block nav %} <p class="index-breadcrumb"></p> {% endblock %}
+
+{% block content %}
+    <div id="mainbox" class="fl">
+
+        <!-- 首页滑动  -->
+        <div class="swiper-container br">
+            <ul class="swiper-wrapper ">
+                {% for important_article in important_articles %}
+                    <li class="swiper-slide"> <a class="link" href="{% url 'article' important_article.id %}" title="{{ important_article.title }}">
+                        <p class="p ellipsis">{{ important_article.title }}</p>
+                        <img src="/media/{{ important_article.cover }}" alt="{{ important_article.title }}" /> <i class="mask"></i> </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <p class="swiper-pagination"></p>
+            <i class="hidden-sm-md-lg swiper-button-next iconfont icon-right"></i>
+            <i class="hidden-sm-md-lg swiper-button-prev iconfont icon-left"></i>
+        </div>
+
+        <!-- 推荐模块A  -->
+        <div class="recommend-a sb br mb">
+            <p class="c-title"><span>热门</span></p>
+            <div class="wrap clearfix">
+                {% for hot_article in hot_articles %}
+                    <article class="item fl"> <a class="thumbnail" href="{% url 'article' hot_article.id %}" title="{{ hot_article.title }}">
+                        <img class="img-cover br" src="/media/{{ hot_article.cover }}" alt="{{ hot_article.title }}"> </a>
+                        <a class="category brightness transition br" href="{% url 'articles' hot_article.category.id %}?type=category" target="_blank">{{ hot_article.category.name }}</a>
+                        <h2 class="title multi-ellipsis">
+                            <a href="{% url 'article' hot_article.id %}" title="{{ hot_article.title }}">{{ hot_article.title }}</a></h2>
+                        <div class="num clearfix"> <span class="view ellipsis fl"><i class="iconfont icon-view"></i>{{ hot_article.view_count }}</span>
+                            <time class=" time ellipsis fr">{{ hot_article.created_time|format_time }}</time>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 推荐模块B  -->
+        <div class="recommend-b sb br mb">
+            <p class="c-title"><span>推荐</span></p>
+            <div class="wrap clearfix">
+                {% for recommend_article in recommend_articles %}
+                    <article class="item fl">
+                        <div class="clearfix">
+                            <div class="title-wrap clearfix"> <a class="category transition br fl" href="{% url 'articles' recommend_article.category.id %}?type=category" target="_blank">{{ recommend_article.category.name }}</a>
+                                <h2 class="title ellipsis fl"> <a href="{% url 'article' recommend_article.id %}" title="{{ recommend_article.title }}">{{ recommend_article.title }}</a> </h2>
+                            </div>
+                            <a class="thumbnail fl" href="{% url 'article' recommend_article.id %}" title="{{ recommend_article.title }}">
+                                <img class="img-cover br" src="/media/{{ recommend_article.cover }}" alt="{{ recommend_article.title }}"> </a>
+                            <div class="fr-wrap">
+                                <p class="intro br clearfix"> {{ recommend_article.description | markdown_to_text:40 }}... </p>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+
+            </div>
+        </div>
+
+{#        <div class="pcd_ad" style="margin-bottom:10px">#}
+{#            <table width="100%" height="90" style="background-color:#ccc;">#}
+{#                <tbody>#}
+{#                <tr align="center">#}
+{#                    <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-首页广告位一</td>#}
+{#                </tr>#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+{#        <div class="mbd_ad" style="margin-bottom:10px">#}
+{#            <table width="100%" height="90" style="background-color:#ccc;">#}
+{#                <tbody>#}
+{#                <tr align="center">#}
+{#                    <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-首页广告位一</td>#}
+{#                </tr>#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+
+        <!-- 最新文章 -->
+        <div class="new-post">
+            <p class="c-title"><span>最新</span></p>
+            {% for latest_article in latest_articles %}
+                <article class="article-list br mb sb clearfix">
+                    <figure class="figure fl"> <a class="thumbnail" href="{% url 'article' latest_article.id %}" title="{{ latest_article.title }}">
+                        <img class="img-cover br" src="/media/{{ latest_article.cover }}" alt="{{ latest_article.title }}"> </a> </figure>
+                    <div class="content">
+                        <h2 class="title ellipsis m-multi-ellipsis"><a href="{% url 'article' latest_article.id %}" title="{{ latest_article.title }}">{{ latest_article.title }}</a></h2>
+                        <p class="intro hidden-sm"> {{ latest_article.description | markdown_to_text:80 }}... </p>
+                        <p class="data clearfix"> <span class="hidden-sm-md-lg author fl"><i class="iconfont icon-user"></i>{{ latest_article.creator.nickname }}</span>
+                            <time class="time fl"> <i class="iconfont icon-time"></i>{{ latest_article.created_time|format_time }}</time>
+                            <span class="view fl"><i class="iconfont icon-view"></i>{{ latest_article.view_count }}</span> <span class="hidden-sm-md-lg tag ellipsis fr">
+                                    <i class="iconfont icon-tag"></i>  </span> </p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+{#        <div class="pcd_ad" style="margin-bottom:10px">#}
+{#            <table width="100%" height="90" style="background-color:#ccc;">#}
+{#                <tbody>#}
+{#                <tr align="center">#}
+{#                    <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-首页广告位二</td>#}
+{#                </tr>#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+{#        <div class="mbd_ad" style="margin-bottom:10px">#}
+{#            <table width="100%" height="90" style="background-color:#ccc;">#}
+{#                <tbody>#}
+{#                <tr align="center">#}
+{#                    <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-首页广告位二</td>#}
+{#                </tr>#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+
+        <!-- 双栏文章 -->
+        <div class="double-post clearfix">
+            {% for menu in menus %}
+                {% get_menu_articles menu 6 as articles %}
+                {% if menu.sort >= 1 and articles %}
+                    <div class="double-list sb br mr mb fl">
+                        <p class="c-title mb ">
+                            <span>{{ menu.name }}</span>
+                            <a class="more" href="{% url 'articles' menu.id %}?type=menu" title="更多{{ menu.name }}"> <i class="iconfont icon-right"></i>
+                            </a>
+                        </p>
+
+
+                        <article class="item mb jq-remove-mb"> <a class="thumbnail" href="{% url 'article' articles.0.id %}" title="{{ articles.0.title }}">
+                            <img class="img-cover br" src="/media/{{ articles.0.cover }}" alt="{{ articles.0.title }}">
+                            <div class="absolute">
+                                <p class="title ellipsis">{{ articles.0.title }}</p>
+                                <div class="num clearfix">
+                                        <span class="view ellipsis fl">
+                                            <i class="iconfont icon-view"></i>{{ articles.0.view_count }}</span>
+                                    <span class="comment ellipsis fl">
+                                            <i class="iconfont icon-comment"></i>
+                                        </span>
+                                    <time class="time ellipsis fr">{{ articles.0.created_time|format_time }}</time>
+                                </div>
+                            </div>
+                            <i class="iconfont icon-quote"></i> <i class="mask br"></i> </a>
+                        </article>
+
+                        <ul class="ul jq-hook">
+                            {% for article in articles %}
+                                {% if not forloop.first %}
+                                    <li class="title clearfix"> <i class="iconfont icon-right fl"></i>
+                                        <a class="a ellipsis fl" href="{% url 'article' article.id %}" title="{{ article.title }}">{{ article.title }}</a>
+                                        <span class="time fr">{{ article.created_time|format_time }}</span> </li>
+                                {% endif %}
+                            {% endfor %}
+
+                        </ul>
+
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

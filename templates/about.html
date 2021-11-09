@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load article_tags %}
+{% load martortags %}
+
+{% block title %}
+   - {{ instance.name }}
+{% endblock %}
+
+{% block css %}
+    <link href="{% static 'plugins/css/ace.min.css' %}" type="text/css" media="all" rel="stylesheet" />
+    <link href="{% static 'martor/css/martor.bootstrap.min.css' %}" type="text/css" media="all" rel="stylesheet" />
+    <style type='text/css'>
+        pre, code {
+            white-space: pre;
+            overflow-x: scroll;
+        }
+        .hljs {
+            display: inline-block;
+            overflow-x: scroll;
+            padding: 0.5em;
+            padding-right: 100%;
+            background: #002b36;
+            color: #839496;
+            -webkit-text-size-adjust: none;
+        }
+    </style>
+{% endblock %}
+
+{% block nav %}
+    <nav class="breadcrumb container">
+        <a href='/'>首页</a> >
+        {% if type == 'menu' %}
+            <a href='{% url 'articles' instance.id %}?type=menu'>{{ instance.name }}</a>
+        {% elif type == 'category' %}
+            <a href='{% url 'articles' instance.id %}?type=menu'>{{ instance.menu.name }}</a> >  >
+            <a href='{% url 'articles' instance.id %}?type=category'>{{ instance.name }}</a>
+        {% elif type == 'tag' %}
+            标签 >  > <a href='{% url 'articles' instance.id %}?type=tag'>{{ instance.name }}</a>
+        {% endif %}
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div id="mainbox" class="article-box fl mb">
+    {% for article in articles %}
+        <article class="art-main sb br mb">
+            <div class="art-head mb">
+                <h1 class="art-title"><a href="{% url 'article' article.id %}"> {{ article.title }} </a></h1>
+            </div>
+            <div class="art-content">
+                {{ article.content | safe_markdown }}
+            </div>
+        </article>
+    {% endfor %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'plugins/js/highlight.min.js' %}"></script>
+    <script>
+        $('.martor-preview pre').each(function(i, block){
+            hljs.highlightBlock(block);
+        });
+    </script>
+{% endblock %}

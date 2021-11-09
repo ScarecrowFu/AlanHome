@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load article_tags %}
+
+{% block title %}
+    {% if instance %}
+        - {{ instance.name }}
+    {% else %}
+        - {{ keyword }}
+    {% endif %}
+{% endblock %}
+
+{% block nav %}
+    <nav class="breadcrumb container">
+        <a href='/'>首页</a> >
+        {% if type == 'menu' %}
+            <a href='{% url 'articles' instance.id %}?type=menu'>{{ instance.name }}</a>
+        {% elif type == 'category' %}
+            <a href='{% url 'articles' instance.id %}?type=menu'>{{ instance.menu.name }}</a> >  >
+            <a href='{% url 'articles' instance.id %}?type=category'>{{ instance.name }}</a>
+        {% elif type == 'tag' %}
+            标签 >  > <a href='{% url 'articles' instance.id %}?type=tag'>{{ instance.name }}</a>
+        {% else %}
+            搜索 >  > <a href='{% url 'search_articles' %}?keyword={{ keyword }}'>{{ keyword }}</a>
+        {% endif %}
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <section id="mainbox" class="fl br mb">
+        <div class="pcd_ad" style="margin-bottom:10px">
+            <table width="100%" height="90" style="background-color:#ccc;">
+                <tbody>
+                <tr align="center">
+                    <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-栏目广告位</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mbd_ad" style="margin-bottom:10px">
+            <table width="100%" height="90" style="background-color:#ccc;">
+                <tbody>
+                <tr align="center">
+                    <td style="text-align: center;color: #666;line-height: 90px;">后台-模块-广告管理-栏目广告位</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="new-post">
+            {% for article in articles %}
+                <article class="article-list br mb sb clearfix">
+                    <figure class="figure fl">
+                        <a class="thumbnail" href="{% url 'article' article.id %}" title="{{ article.title }}">
+                            <img class="img-cover br" src="/media/{{ article.cover }}" alt="{{ article.title }}"> </a>
+                    </figure>
+                    <div class="content">
+                        <h2 class="title ellipsis m-multi-ellipsis"><a href="{% url 'article' article.id %}" title="{{ article.title }}"><b>{{ article.title }}</b></a></h2>
+                        <p class="intro hidden-sm">  {{ article.description | markdown_to_text:80 }}... ... </p>
+                        <p class="data clearfix"> <span class="hidden-sm-md-lg author fl"><i class="iconfont icon-user"></i>{{ article.creator.nickname }}</span>
+                            <time class="time fl"> <i class="iconfont icon-time"></i>{{ article.created_time|format_time }}</time>
+                            <span class="view fl"><i class="iconfont icon-view"></i>{{ article.view_count }}</span> <span class="hidden-sm-md-lg tag ellipsis fr">
+                            <i class="iconfont icon-tag"></i>
+                                {% for tag in article.tags.all %}
+                                    <a href='{% url 'articles' tag.id %}?type=tag'>{{ tag.name }}</a>
+                                {% endfor %}
+                            </span>
+                        </p>
+                    </div>
+                </article>
+            {% endfor %}
+
+        </div>
+        <div class="pages">
+            <ul>
+                {% if page == 1 %}
+                    <li>首页</li>
+                {% else %}
+                    <li><a href='?page=1'>首页</a></li>
+                {% endif %}
+
+                {% if articles.has_previous %}
+                    <li><a href='?page={{ articles.previous_page_number }}'>上一页</a></li>
+                {% endif %}
+
+                {% for page_t in page_total|page_range %}
+                    {% if page_t|add:1 == page %}
+                        <li class="thisclass">{{ page_t|add:1 }}</li>
+                    {% else %}
+                        <li><a href='?page={{ page_t|add:1 }}'>{{ page_t|add:1 }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if articles.has_next %}
+                    <li><a href='?page={{ articles.next_page_number }}'>下一页</a></li>
+                {% endif %}
+
+                {% if page == page_total %}
+                    <li>末页</li>
+                {% else %}
+                    <li><a href='?page={{ page_total }}'>末页</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </section>
+{% endblock %}
