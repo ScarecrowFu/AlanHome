@@ -96,7 +96,12 @@
                         <p class="data clearfix"> <span class="hidden-sm-md-lg author fl"><i class="iconfont icon-user"></i>{{ latest_article.creator.nickname }}</span>
                             <time class="time fl"> <i class="iconfont icon-time"></i>{{ latest_article.created_time|format_time }}</time>
                             <span class="view fl"><i class="iconfont icon-view"></i>{{ latest_article.view_count }}</span> <span class="hidden-sm-md-lg tag ellipsis fr">
-                                    <i class="iconfont icon-tag"></i>  </span> </p>
+                                    <i class="iconfont icon-tag"></i>
+                             {% for tag in latest_article.tags.all %}
+                                    <a href='{% url 'articles' tag.id %}?type=tag'>{{ tag.name }}</a>
+                                {% endfor %}
+                            </span>
+                        </p>
                     </div>
                 </article>
             {% endfor %}

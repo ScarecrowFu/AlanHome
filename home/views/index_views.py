@@ -7,7 +7,7 @@ from home.utils.base_helpers import get_website_configure
 
 def base_data():
     menus = Menu.objects.all().order_by('-sort')
-    random_articles = Article.objects.order_by('?').all()[:5]
+    random_articles = Article.objects.get_publish().order_by('?').all()[:5]
     tags = Tag.objects.all()
     articles_count = Article.objects.get_publish().count()
     all_view_count = Article.objects.get_publish().aggregate(Sum('view_count'))['view_count__sum']
