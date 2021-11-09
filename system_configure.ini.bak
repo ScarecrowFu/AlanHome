@@ -1,5 +1,3 @@
-[ROOT]
-MEDIA_ROOT=/Data
 
 [REDIS]
 REDIS_HOST = 127.0.0.1
