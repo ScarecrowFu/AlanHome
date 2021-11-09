@@ -88,7 +88,7 @@ class Article(models.Model):
     like_count = models.IntegerField(default=0, verbose_name='点赞次数')
 
     class Meta:
-        db_table = 'doc'
+        db_table = 'article'
         verbose_name = '文章'
         verbose_name_plural = verbose_name
 
