@@ -9,9 +9,9 @@
     <meta name="force-rendering" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
     <meta name="applicable-device" content="pc,mobile">
-    <title>程序员赛道 {% block title %} {% endblock %}</title>
-    <meta name="keywords" content="扶妖-程序员赛道">
-    <meta name="description" content="扶妖，程序员赛道, 技术文章，博客，文章，程序，Python, JavaScript, 副业，自媒体，短视频，电商">
+    <title>{{ website_configure.title }} {% block title %} {% endblock %}</title>
+    <meta name="keywords" content="{{ website_configure.keywords }}">
+    <meta name="description" content="{{ website_configure.description }}">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
     <!--[if lt IE 9]><div class="fuck-ie"><p class="tips">*您的IE浏览器版本过低，为获得更好的体验请使用Chrome、Firefox或其他现代浏览器!</p></div><![endif]-->
@@ -65,8 +65,8 @@
                     <img class="bg" src="{% static 'images/txbg.png' %}"/>
                     <div class="avatar"><img class="img" src="{% static 'images/avatar.jpg' %}" alt="扶妖-程序员赛道"/></div>
                     <div class="wrap pd">
-                        <p class="title">程序员赛道</p>
-                        <p class="info">程序员赛道，分享各类技术文章，项目，工具，创业方向，以及利用程序解决遇到的问题。</p>
+                        <p class="title">{{ website_configure.title }}</p>
+                        <p class="info">{{ website_configure.remark }}</p>
                         <ul class="ul clearfix">
                             <li class="li fl"><span class="num">{{ all_view_count }}</span><small>阅读数</small></li>
                             <i class="line iconfont icon-line"></i>

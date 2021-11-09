@@ -16,7 +16,7 @@ from home.utils.base_helpers import get_configure
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+CONFIGURE_FILE = os.path.join(BASE_DIR, 'system_configure.ini')
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,9 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-o&+s_2e%@-_ydhbyw-8vj91_mfls2wdi#b99^8wvwpa!dzi1#p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+is_debug = get_configure(CONFIGURE_FILE, 'BASE', 'DEBUG', 'true')
+if is_debug.lower() == 'true':
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
+else:
+    DEBUG = False
+    ALLOWED_HOSTS = ['*.90fyl.com', '90fyl.com']
 
 
 # Application definition
@@ -79,7 +83,7 @@ WSGI_APPLICATION = 'AlanHome.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-CONFIGURE_FILE = os.path.join(BASE_DIR, 'system_configure.ini')
+
 database_name = get_configure(CONFIGURE_FILE, 'MYSQL', 'MYSQL_DB', 'alan_home')
 database_user = get_configure(CONFIGURE_FILE, 'MYSQL', 'MYSQL_USER', 'alan')
 database_password = get_configure(CONFIGURE_FILE, 'MYSQL', 'MYSQL_PASSWORD', 'PASSWORD')

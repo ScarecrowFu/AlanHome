@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from home.models import Menu, Category, Tag, Article
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from home.utils.base_helpers import get_website_configure
 
 
 def base_data():
@@ -11,8 +12,9 @@ def base_data():
     articles_count = Article.objects.get_publish().count()
     all_view_count = Article.objects.get_publish().aggregate(Sum('view_count'))['view_count__sum']
     if not all_view_count: all_view_count = 0
+    website_configure = get_website_configure()
     return {'menus': menus, 'random_articles': random_articles, 'tags': tags,
-            'articles_count': articles_count, 'all_view_count': all_view_count}
+            'articles_count': articles_count, 'all_view_count': all_view_count, 'website_configure': website_configure}
 
 
 def index(req):
